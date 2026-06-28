@@ -7,11 +7,16 @@ import { Person } from '../../types';
 export const PeoplePage = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
 
   const { slug } = useParams();
 
   useEffect(() => {
+    setIsLoading(true);
+    setIsLoaded(false);
+    setIsError(false);
+
     fetch('https://mate-academy.github.io/react_people-table/api/people.json')
       .then(response => {
         if (!response.ok) {
@@ -28,6 +33,7 @@ export const PeoplePage = () => {
       })
       .finally(() => {
         setIsLoading(false);
+        setIsLoaded(true);
       });
   }, []);
 
@@ -45,11 +51,11 @@ export const PeoplePage = () => {
             </p>
           )}
 
-          {!isLoading && !isError && people.length === 0 && (
+          {isLoaded && !isLoading && !isError && people.length === 0 && (
             <p data-cy="noPeopleMessage">There are no people on the server</p>
           )}
 
-          {!isLoading && !isError && people.length > 0 && (
+          {isLoaded && !isLoading && !isError && people.length > 0 && (
             <PeopleTable people={people} selectedSlug={slug} />
           )}
         </div>
